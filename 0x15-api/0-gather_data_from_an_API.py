@@ -1,14 +1,37 @@
 #!/usr/bin/python3
-"""Returns to-do list information for a given employee ID."""
+
+"""[task 0, get rest api]
+"""
 import requests
-import sys
+from sys import argv
 
-if __name__ == "__main__":
-    url = "https://jsonplaceholder.typicode.com/"
-    user = requests.get(url + "users/{}".format(sys.argv[1])).json()
-    todos = requests.get(url + "todos", params={"userId": sys.argv[1]}).json()
 
-    completed = [t.get("title") for t in todos if t.get("completed") is True]
-    print("Employee {} is done with tasks({}/{}):".format(
-        user.get("name"), len(completed), len(todos)))
-    [print("\t {}".format(c)) for c in completed]
+def get_user(id):
+    """get the user
+    Args:
+        id (integer: user id]
+    """
+    url = 'https://jsonplaceholder.typicode.com/'
+    users = requests.get(url + 'users', params={'id': id}).json()
+    name = users[0]['name']
+    url = 'https://jsonplaceholder.typicode.com/'
+    todos = requests.get(url + 'todos', params={'userId': id}).json()
+    return([name, todos])
+
+
+def show(data):
+    name = data[0]
+    todos = data[1]
+    n = 0
+    str_to_print = ''
+    for task in todos:
+        if task['completed'] is True:
+            n += 1
+            str_to_print += '\t ' + task['title'] + '\n'
+    print('Employee {} is done with tasks({}/{}):'.format(name, n, len(todos)))
+    print(str_to_print, end='')
+
+
+if __name__ == '__main__':
+    data = get_user(argv[1])
+    show(data)
