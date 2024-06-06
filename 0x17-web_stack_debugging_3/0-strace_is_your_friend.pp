@@ -1,5 +1,9 @@
-# fix 500 error 
-exec { 'wordpress typo error':
-  command  => "sed -i 's/phpp/php/' /var/www/html/wp-settings.php",
-  path     => '/usr/bin:/usr/sbin:/bin',
+# Web Stack debugging fix typo in config file
+exec { 'fix-wordpress':
+  environment => ['DIR=/var/www/html/wp-settings.php',
+                  'OLD=phpp',
+                  'NEW=php'],
+  command     => 'sudo sed -i "s/$OLD/$NEW/" $DIR',
+  path        => ['/usr/bin', '/bin'],
+  returns     => [0, 1]
 }
